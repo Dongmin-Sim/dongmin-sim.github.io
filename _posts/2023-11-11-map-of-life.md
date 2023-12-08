@@ -2,7 +2,7 @@
 title: 2023 삶의 지도
 author: codongmin
 date: 2023-11-11 12:10:00 +0800
-categories: [회고]
+categories: [회고, 글또]
 tags: [회고, 글또]
 ---
 ## 지금의 나를 만들어온 길
