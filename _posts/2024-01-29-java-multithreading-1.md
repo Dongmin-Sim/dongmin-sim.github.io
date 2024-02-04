@@ -62,7 +62,7 @@ image:
 위에서 제가 경험했던 프로그램의 예시를 들어서 설명해보려고 합니다.   
 뷰어 프로그램은 다음와 같은 순서를 가지고 실행이 됩니다. 
 
-![Desktop View](/assets/posts/singleThread.png){: width="972" height="589" .w-50}_싱글스레드_
+![Desktop View](/assets/posts/singleThread.png){: width="972" height="589"}_싱글스레드_
 
 
 
@@ -72,7 +72,7 @@ image:
 
 그리고 프로그램이 메모리에 올라가 프로세스에서 가장 먼저 작업을 실행하는 스레드를 "메인스레드" 라고 부릅니다. 이렇게 하나의 스레드만을 가지고 한번에 한작업을 수행하는 방식을 <u>싱글스레드(Single Thread)</u>라고 합니다. 굉장히 직관적인 이름입니다.
 
-![Desktop View](/assets/posts/MultiThread.png){: width="972" height="589" .w-50}_멀티스레드_
+![Desktop View](/assets/posts/multiThread.png){: width="972" height="589"}_멀티스레드_
 
 멀티스레드는 더 간단합니다. 프로세스에 스레드가 여러개 있으면 <u>멀티스레드</u>입니다. 프로그램의 작업 흐름이 하나에서 두개가 되거나 이보다 더 많아지는 것입니다. 
 
@@ -94,7 +94,7 @@ image:
 
 다음과 같은 경험들이 떠오를 수 있습니다. 
 
-![Desktop View](/assets/posts/badResponsiveness.png){: width="972" height="589" .w-50}_좋지 않은 응답성의 예시_
+![Desktop View](/assets/posts/badResponsiveness.png){: width="972" height="589"}_좋지 않은 응답성의 예시_
 
 - 고객 서비스를 받기 위해 하루 반나절 기다리는 일 
 - 메시지를 답장받는데 걸리는 시간이 늦어질때
@@ -102,7 +102,7 @@ image:
 
  이러한 좋지 않은 응답성은 프로덕트나, 애플리케이션의 고객들에게 불편한 경험을 심어줄수 있습니다. 
 
-![Desktop View](/assets/posts/responsivenessResearch.png){: width="972" height="589" .w-50}_Google SOASTA Research 2017_
+![Desktop View](/assets/posts/responsivenessResearch.png){: width="972" height="589"}_Google SOASTA Research 2017_
 
 실제로 이와 관련한 [구글 리서치 통계](https://www.thinkwithgoogle.com/marketing-strategies/app-and-mobile/page-load-time-statistics/)가 있습니다. 페이지의 로딩시간이 1초에서 <u>3초</u>로 길어질 경우 <u>이탈률이 32% 증가</u>한다는 통계입니다. 고객 이탈이 늘어날 경우 해당 애플리케이션의 수익 발생 가능성이 줄어들고 손해로 이어질 가능성이 높기 때문에 좋지 않은 응답성은 비지니스에 치명적입니다. 
 
