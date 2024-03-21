@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://dongmin-sim.github.io/sitemap.xml
