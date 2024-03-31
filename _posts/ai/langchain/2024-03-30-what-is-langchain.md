@@ -42,7 +42,7 @@ LangChain 공식문서에 따르면 다음과 같은 Task를 수행할 수 있�
 
 언어모델을 이용하여 몇가지 예시에 대한 맥락을 파악하거나, 제공된 맥락에 따라 답변하는 방법 등 추론을 하는 Task를 수행하는 어플리케이션을 개발할때 LangChain Framwork를 고려해볼 수 있는 것이다.
 
-![Desktop View](/assets/posts/ai/LangChain/LangChain-do.png){: width="972" height="589"}_LangChain_
+![Desktop View](/assets/posts/ai/langchain/langChain-do.png){: width="972" height="589"}_LangChain_
 
 LangChain은 기본적으로 **여러 외부 소스**(Google, Wikipedia, 검색 Api 등)을 LLM과 연결해줄 수 있다.
 이때 여러 기능을 하는 **명령어**들 끼리 엮어서 사용할 수가 있는데, 이것이 LangChain에서 말하는 **Chain**이라는 개념이다. 뒤에서 다룰 LLM, Tool이나, 데이터 전처리와 같은 단계들의 **시퀀스**를 의미한다.
@@ -83,7 +83,7 @@ LangChain 은 다음과 같은 주요 모듈로 이루어져 있다. 각 모듈�
 
 ### LangChain Logo
 
-![Desktop View](/assets/posts/ai/LangChain/LangChainLogo.png){: width="972" height="589" .w-50}_LangChain Logo_
+![Desktop View](/assets/posts/ai/langchain/LangChainLogo.png){: width="972" height="589" .w-50}_LangChain Logo_
 
 LangChain의 로고에 뜬금없이 왠 **앵무새**가 있을까? 궁금해서 검색해봤다.
 
@@ -107,7 +107,7 @@ LangChain은 기본적으로 이러한 LLM을 사용해서 주어진 Task들을 
 
 ### Problem Context
 
-![Desktop View](/assets/posts/ai/LangChain/chatgpt-LangChain.png){: width="972" height="589"}_예를 들면 이런 경우..?_
+![Desktop View](/assets/posts/ai/langchain/chatgpt-langchain.png){: width="972" height="589"}_예를 들면 이런 경우..?_
 
 만약 **최신 날짜를 기준으로 정보**를 알고 싶다면 어떻게 해야할까(최신 기사, 최신 동향 등)
 언어 모델(LLM)은 특정한 날짜를 기준으로 훈련을 받음, 이러한 종류의 task에는 최신 데이터가 언어 모델(LLM)의 훈련 셋에 포함되어 있지 않았었기 때문에, 다시 말해 **배운적이 없기 때문에 답변이 불가능**하다.
@@ -130,7 +130,7 @@ Agent에서 언어 모델(LLM)은 **수행할 작업과 순서를 결정**하는
 
 예를 들어 Agent는 언어 모델(LLM)을 사용하여 다음과 같은 작업들을 수행할 수 있음.
 
-![Desktop View](/assets/posts/ai/LangChain/LangChain-core-idea.png){: width="972" height="589"}_Agent 동작 예시_
+![Desktop View](/assets/posts/ai/langchain/langchain-core-idea.png){: width="972" height="589"}_Agent 동작 예시_
 
 **상황 : 수행하려고 하는 작업이 있고, 이를 수행할 Agent를 정의하는 상황**
 
@@ -162,7 +162,7 @@ Agent에게 작업을 맡기면, Agent는 가장 먼저 과제를 달성하고, 
 
 이를 통해 Agent가 큰 과제와 수행단계의 목록을 직접 정렬하고 최종 결과를 리턴하는 것이 가능하다.
 
-![Desktop View](/assets/posts/ai/LangChain/chain-of-thought.png){: width="972" height="589"}_프롬프트 구성 예시_
+![Desktop View](/assets/posts/ai/langchain/chain-of-thought.png){: width="972" height="589"}_프롬프트 구성 예시_
 
 다시 돌아와서 Agent는 수행해야하는 하위 작업들을 나열하는 것 뿐만 아니라
 하위 작업을 수행하기 위한 필요한 실질적인 행동(action)을 할 수 있음.
