@@ -42,7 +42,7 @@ LangChain 공식문서에 따르면 다음과 같은 Task를 수행할 수 있�
 
 언어모델을 이용하여 몇가지 예시에 대한 맥락을 파악하거나, 제공된 맥락에 따라 답변하는 방법 등 추론을 하는 Task를 수행하는 어플리케이션을 개발할때 LangChain Framwork를 고려해볼 수 있는 것이다.
 
-![Desktop View](/assets/posts/ai/langchain/langChain-do.png){: width="972" height="589"}_LangChain_
+![Desktop View](/assets/posts/ai/langchain/langchain-do.png){: width="972" height="589"}_LangChain_
 
 LangChain은 기본적으로 **여러 외부 소스**(Google, Wikipedia, 검색 Api 등)을 LLM과 연결해줄 수 있다.
 이때 여러 기능을 하는 **명령어**들 끼리 엮어서 사용할 수가 있는데, 이것이 LangChain에서 말하는 **Chain**이라는 개념이다. 뒤에서 다룰 LLM, Tool이나, 데이터 전처리와 같은 단계들의 **시퀀스**를 의미한다.
