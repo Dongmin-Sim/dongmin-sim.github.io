@@ -20,7 +20,7 @@ image:
 
 코드트리에 대해서 궁금하거나 코딩테스트를 준비가 어려운 이유가 궁금하다면 적어둔 이전 리뷰글을 확인하면 도움이 될 것 같다.
 
-[코드트리, 코테 공포증을 몰입의 시간으로 바꾸는 방법](https://dongmin-sim.github.io/posts/codetree-review-2/)
+[코드트리, 코테 공포증을 몰입의 시간으로 바꾸는 방법](https://dongmin-sim.github.io/posts/codetree-review-1/)
 
 ## 회고
 
