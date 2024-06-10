@@ -40,6 +40,7 @@
 
         color: var(--heading-color) !important;
         font-size: 1.25rem;
+        font-weight: 600;
       }
 
       %muted {
@@ -54,6 +55,7 @@
 
           line-height: 1.5;
           margin: 0;
+          font-size: 0.5rem;
         }
       }
 
