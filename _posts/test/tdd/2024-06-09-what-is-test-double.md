@@ -1,5 +1,5 @@
 ---
-title: Stub과 Mock 차이로 살펴보는 테스트 더블이란?
+title: 테스트 더블이란?
 author: codongmin
 date: 2024-06-09T13:02:00
 categories:
@@ -19,7 +19,7 @@ preview: 테스트 더블에 대한 개념을 설명하고, Stub, Mock에 대해
 
 그리고 Test Double에 해당하는 개념인 Stub과 Mock에 대해서 간단히 알아보고 이 둘의 차이를 설명해보고자 한다.
 
-## 1. Dummy
+### Dummy란
 
 **더미(Dummy)** 라는 개념을 들어보았는가?
 
@@ -38,7 +38,7 @@ preview: 테스트 더블에 대한 개념을 설명하고, Stub, Mock에 대해
 
 > **테스트 환경**에서 **테스트 대상**을 검증하기 위해 테스트 대상에 **필요한 기능/환경을 대신**하는 것
 
-## 2. Test Double
+## 1. Test Double
 
 0과 1로 넘어온 세계에도 앞선 더미(Dummy)와 비슷한 개념이 존재한다.
 
@@ -57,7 +57,7 @@ preview: 테스트 더블에 대한 개념을 설명하고, Stub, Mock에 대해
 
 **Test Double**은 테스트에서 **관심사 검증**을 위해 외부 요인의 **필요한 기능**을 대신 제공해주는 대상(객체)이라고 할 수 있다.
 
-### 2.1 Test의 구별
+### 1.1 Test의 구별
 
 Martin Fowler의 블로그 글인 [Unit Test](https://martinfowler.com/bliki/UnitTest.html) 에서 테스트 단위와 관련된 설명 중 **Test Double** 개념이 같이 나온다. 앞으로 나올 내용들의 이해를 위해 간략하게 언급하고 넘어가려고 한다.
 
@@ -89,7 +89,7 @@ Martin Fowler의 블로그 글인 [Unit Test](https://martinfowler.com/bliki/Uni
 
 바로 이때, **Solitary Test**를 진행하기 위해 필요한 **어떤 무언가**로 **Test Double**이 사용될 수 있다.
 
-## 3. Test Doubles
+## 2. Stub과 Mock
 
 이러한 역할을 하는 Test Double 들의 모임을 **Test Doubles** 라고 부른다. 단순히 복수형이 붙은 것 뿐이다.
 
@@ -140,7 +140,7 @@ public class WeatherServiceImpl implements WeatherService {
 이 API를 테스트하는 상황을 예시로 아래 test double 들을 설명해보고자 한다.
 (테스트 더블에 대한 이해를 주 목표로 상황을 가정하는 것으로 디테일한 부분에 대한 현실성이나 실현가능성은 후순위로 미룬다)
 
-### 3.1 Test Stub
+### 2.1 Test Stub
 
 위의 테스트를 진행하려면 먼저 외부의 **의존성 문제**를 먼저 해결해야한다. 테스트 대상인 `getActivityAdvice` 메소드는 현재 위치를 받아오는 `LocationAPIService`와 위치 정보를 기반으로 날씨정보를 받아오는 `WeatherAPIClient`를 의존하고 있다.
 
@@ -215,7 +215,7 @@ public class LocationAPIServiceStub implements LocationAPIService {
 - 테스트 코드가 **간결**하다.
 - **별도 구현** 클래스가 필요하다.
 
-### 3.2 Test Mock
+### 2.2 Test Mock
 
 `Mock`은 실제 객체의 동작을 모방하는 객체(Mock Object)를 말한다.
 
@@ -290,6 +290,10 @@ BDDMockito.then(weatherAPIClientMock).should().fetchWeatherData(any());
 - 의존 객체에 대한 **행위 명세**가 필요하다.
 - 별도 구현 클래스가 필요없다.
 
+---
+
+## 3. 비교
+
 #### Stub vs Mock 차이
 
 처음에 이 개념을 접했을 때는 혼동이 많이왔다. 미리 준비된 답변을 제공하는 Stub이나, 호출에 대한 기대 명세를 리턴하는 Mock은 같은거 아닌가라는 생각이 들었다. 오히려 Mock이 Stub의 개념을 더 확장한 듯한 느낌도 든다.
@@ -363,9 +367,7 @@ class Together {
 }
 ```
 
----
-
-## 4. 이들은 왜 사용해야 하는가?
+#### 이들은 왜 사용해야 하는가?
 
 이유는 간단하다 **주요 관심사**에 집중하기 위해.
 
@@ -390,3 +392,5 @@ class Together {
 만일 검증하고자 하는 코드가 아닌 검증 대상(System Under Test, sut)이 아닌 부가적인 부분에서 에러가 발생하거나, 의존성이 걸리거나, 혹은 실제로 테스트 하고 싶은 코드가 실행되지 않고, 실행될때마다, 결과값이 달라지는 상황이 발생하게 된다면. 이런 일련의 과정, 문제와 요소들로 인해 테스트 하고자 하는 주요 테스트 관심사에 집중하지 못 할 가능성이 높다.
 
 주요 테스트 관심사에 집중하기 위해, 필요한 주변 의존성들을 대신 맡아준다. 이것들이 테스트 더블을 사용하는 이유이자 목적일 것이다.
+
+## 5. 마무리하며
