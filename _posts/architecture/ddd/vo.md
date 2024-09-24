@@ -69,6 +69,7 @@ public class Post {
     private final int likeCount;
     private final boolean isEdit;
     private final DateTime dateTime;
+    ...
 }
 ```
 
@@ -97,14 +98,85 @@ public class Author {
 }
 ```
 
-다음과 같이 "작성자"를 표현하는 값 객체를 만들 수 있다. 
-이때 엔티티와는 다른 부분이 존재한다. 값 객체는 식별자가 없다. 서로 다른 "작성자" 값 객체의 비교는 식별자가 아닌 각각의 속성의 값으로 동등성 비교를 한다. 
+위와 같이 "작성자(Author)"를 표현하는 값 객체를 만들 수 있다. 
 
-equals 필요 
+```java
+public class Post {  
+    private final Long id;  
+    private final Author author;  
+    private final String content;
+    private final int likeCount;
+    private final boolean isEdit;
+    private final DateTime dateTime;
+    ...
+}
+```
+이전 보다 Post가 가지고 있는 속성이 "작성자"와 연관되어있다는 것을 명확하게 표현할 수 있다.
+#### 값 객체의 특징
 
-불변상태
-데이터의 변경보다 새로운 객체를 생성하는 방식을 채택
-참조 투명성 스레드 안전 
+Author 객체를 보자. 엔티티와는 다른 부분이 존재한다. 
+값 객체는 **식별자가 없다.** 그렇다면 서로 다른 값 객체는 어떻게 비교할 수 있을까?
+
+서로 다른 "Author" 값 객체의 비교는 식별자가 아닌 각각의 **속성의 값**으로 **동등성 비교**를 한다. 
+
+> [!NOTE] 동등성(equality) 비교와 동일성(identity) 비교
+> 두 객체가 **논리적으로** 같은지를 확인하는 비교를 말한다. 주로 객체가 가지고 있는 **속성 값**이 같은지를 비교한다.
+> 
+> 이와 대조적인 개념으로 **동일성(identity)** 비교가 있다. 동일성 비교는 객체가 **물리적**으로(상대적) 같은지 확인하는 비교를 말한다. 객체가 할당된 **메모리 주소**가 실제로 일치하는지를 비교한다. 
+
+각각의 속성값들이 서로 일치하는지 비교해야하기 때문에 객체는 `equals` 와 `hashCode` 메서드의 오버라이드가 필요하다. 
+
+```java
+public class Author {
+	private final String name;  
+    private final String email;
+    ...
+	@Override 
+	public boolean equals(Object o) { 
+		if (this == o) return true; 
+		if (o == null || getClass() != o.getClass()) return false; 
+		Author author = (Author) o;
+		return Objects.equals(name, author.name) && 
+		Objects.equals(email, author.email); 
+	}
+	
+	@Override 
+	public int hashCode() { 
+		return Objects.hash(name, email); 
+	}
+}
+```
+
+또 하나 엔티티와 다른 점은 **속성의 상태가 변경**될 수 있는 엔티티와는 다르게 값 객체는 속성의 상태가 변경될 수 없다. 즉, **불변(immutable) 타입**으로 구현된다. 
+
+왜 **값 객체**는 **불변타입**으로 구현하는 것으로 방향이 잡혔을까 ?
+
+그 이유는 **값 객체의 정체성**에 따른 특성 때문이라고 나는 생각한다. 앞서 값 객체는 **속성 값의 동등성** 비교를 통해 서로 다른 값 객체를 구분한다고 했다. **식별자**의 의미보다 **속상 값 자체**에 값 객체의 의미가 있기 때문일 것이다. 
+
+값 객체의 속성 값을 중요시하는 역할에서 불변타입은 꽤나 좋은 이점들을 가져다준다.
+
+첫번째로 한번 생성된 속성 값은 변경될 수 없으니 값 객체를 **신뢰성** 있게 사용할 수 있다. 
+신뢰성 있게 사용한다는게 무슨말일까? 다음은 불변상태가 아닌 VO를 가정한 예시이다.
+
+```java
+
+```
+
+1. 값의 일관성이 유지된다. 
+2. 값을 예측할 수 있다. 
+
+
+참조 투명성 
+
+스레드 안전 
+멀티스레드 환경에서 동시 접근 시, 객체가 불변이므로 동기화 없이도 안전하게 사용가능
+
+
+
+따라서 값 객체에는 속성 값을 변경할 수 있는 `setter` 를 제공하지 않는다.
+
+
+#### 정리
 
 
 ---
@@ -136,10 +208,13 @@ equals 필요
 단순한 연산을 비지니스 로직을 반영하는 행위로 표현할 수 있다. 
 
 ###  중복 제거
+불변타입이 가져다 주는 이점
+
 ### 2. 명확한 의미를 표현 
 가독성 증가, 코드의 의미 이해가 쉬워짐. 
 
-### 2. 재사용 가능
+### 2. 캐싱 & 재사용 가능
+불변타입이 가져다 주는 이점
 
 ### 3. 테스트 용이
 
