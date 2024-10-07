@@ -3,8 +3,8 @@ title: 글또 9기를 마무리하며, KPT 회고
 author: codongmin
 date: 2024-05-19T21:31:00
 categories:
-  - 회고
   - 글또
+  - 회고
 tags:
   - 회고
   - 글또
@@ -12,11 +12,7 @@ image:
   path: /assets/img/thumbnail/geultto-social-card.png
   lqip: 
   alt: 글또 9기 회고
-preview: |-
-  원하는 내용을 여기에 입력하세요.<br>
-  이 부분은 Markdown 형식으로 작성할 수 있습니다.
-  이 부분은 Markdown 형식으로 작성할 수 있습니다.
-  이 부분은 Markdown 형식으로 작성할 수 있습니다.이 부분은 Markdown 형식으로 작성할 수 있습니다.이 부분은 Markdown 형식으로 작성할 수 있습니다.
+preview: 글또 9기를 마무리하며 회고한 글입니다.
 ---
 
 글또 회고

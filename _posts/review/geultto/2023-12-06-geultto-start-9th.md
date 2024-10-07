@@ -3,7 +3,6 @@ title: 글또 9기를 시작하며.. 다짐글
 author: codongmin
 date: 2023-12-06 17:25:00 +0800
 categories:
-  - 회고
   - 글또
 tags:
   - 회고
@@ -12,6 +11,7 @@ image:
   path: /assets/img/thumbnail/geultto-social-card.png
   lqip: 
   alt: 글또 9기 회고
+preview: 글또 9기에 참여하면서 활동 목표와 생각을 정리한 다짐글입니다.
 ---
 
 ## 들어가며
