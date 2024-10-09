@@ -10,6 +10,7 @@ tags:
 preview: 값 객체(Value Object)의 정의와 이점에 대해 설명합니다.
 ---
 
+
 ## 들어가며
 
 최근 개발중인 서비스에서 값 객체(Value Object)를 활용하여 개선시켰던 경험이 있어 이 내용을 글로 남기고 싶었다. 
@@ -208,7 +209,7 @@ System.out.println(post.author.getName()) /// ???
 원시타입의 속성을 값 객체로 한번 더 감싸는 듯한 행위는 굳이 불필요한 행위를 하는 것처럼 보일 수 있다. 
 값 객체로 감싼다는 행위가 도대체 어떤 이점들을 가져다 줄 수 있을까? 
 
-### 1. 도메인 로직 캡슐화
+### 1. 캡슐화로 인한 간결하고 유연한 코드
 
 원시타입 속성을 별도의 객체로 한번 더 래핑함으로써 이 공간에 **원시타입 속성**과 **값과 관련된 로직**들을 **같이 보관**할 수 있다. 이를 **캡슐화**라고 한다. 
 
@@ -237,32 +238,97 @@ class FeedService {
 
 첫번째로 던질 질문은 `FeedService`의 `createFeed` 는 어떤일을 하고 있을까?
 - 피드를 생성하기 위해 컨텐츠를 **검증하는 일** 
-- 피드를 생성하고 저장하는 일
+- 피드를 **생성하고 저장**하는 일
 
 이어지는 질문으로, 만약 검증 로직이 하나가 아니라 5개, 10개 혹은 그보다 더 많이 늘어난다면? 
 - 검증 로직이 늘어날수록 `createFeed` 메서드의 **검증 코드**도 같이 늘어나게 된다. 
 	- 어떤 일을 하는 메서드인지 파악하기가 어려워진다.
-- 만일 다른 곳에서 피드를 생성해야하는 일이 있을 경우, 검증 로직을 또 작성해주어야 한다.
-- 검증 로직이 수정될 경우 동시에 수정해야하는 포인트들이 많아진다.
+- 만일 다른 곳에서 피드를 생성해야하는 일이 있을 경우, 검증 로직을 또 작성해주어야 한다. 중복된 코드가 작성된다. 
+- 만일 중복된 코드에서 수정해야 하는 일이 발생한다면 동시에 수정해야하는 포인트들이 많아진다.
+- `createFeed` 메서드에 검증 코드가 위치함으로써 서로 강하게 결합된다.
 
 결론적으로 `createFeed`가 해야하는 일이 많아지게 된다. 비지니스 로직은 언제든지 변할 수 있다. 만일 변경된다면 이와 관련된 코드들도 같이 변경되어야 해서 유지보수가 어렵고 코드가 난잡해지고 가독성이 낮아질 우려가 있다.
 
+**값 객체 사용**
+```java
+class Feed {
+	FeedContent content;
+}
+// ...
 
+class FeedContent {
+	String content;
 
-값 객체는 내부에서 도메인 로직을 구현함으로써 
-캡슐화할 수 있다. 값 객체와 연관된 도메인 로직(검증 로직 등)을 하나로 집중시킬 수 있다. 
+	public FeedContent(String content){
+		checkContentLength(content);
+	}
 
+	private void checkContentLength(content) {
+		if (검증 로직) {
+			throw new Exception;
+		}
+	}
+}
+// ...
+
+class FeedService {
+	Feed createFeed(String content) {
+		Feed feed = new Feed(content);
+		repository.save(feed);
+	}
+}
+```
+
+값 객체를 사용하면 값과 관련된 로직들을 한 곳에 집중시킬 수 있다. 이 덕분에 `FeedService` 의 `createFeed` 메서드는 (굳이? 알지 않아도 되는) 검증 로직이 아니라 피드를 생성하고 저장하는 것에만 집중할 수 있다. 뿐만 아니라 검증 로직이 변경된다면, FeedContent 값 객체의 검증로직 부분만 수정해주면 된다.
+
+검증 로직을 값 객체 안으로 옮김으로써 서로의 책임을 적절하게 분할한 셈이다. 
 
 ### 2. 테스트 용이
 
-검증로직,
+값 객체를 사용해 값과 값과 관련된 로직을 한 곳에 집중시키면 따라오는 이점이 한 가지 더 생긴다.
+바로 테스트가 쉬워진다는 것이다. 
 
-로직의 종류가? 
+위의 코드에서 **원시타입 속성**을 사용했을 때, "피드의 컨텐츠의 길이는 200자를 넘어서는 안된다" 라는 로직이 잘 동작하는지를 테스트하기 위해서는 어떤 것들이 필요할까? 
+- Feed 객체에 들어갈 문자열과
+- FeedService의 createFeed 메서드가 필요하다. 
 
-테스트 코드 예시 추가
+```java
+@Test
+void givenFeedServiceAndOverLengthContent_whenCreatedFeedContent_thenThrowsException() {
+	// given
+	FeedRepository repository = new FeedRepository();
+	FeedService feedSevice = new FeedService(repository...); // 기타 FeedService에 필요한 의존관계 주입
+	String overLengthContent = 'a'.repeat(201);
+
+	// when & then
+	asserThrow(Exception.class, () -> feedService.createFeed(overLengthContent));
+}
+```
+
+테스트 하고자 하는 것은 "피드 컨텐츠의 길이" 이지만, 피드를 생성하고 저장하는 `createFeed` 메서드가 필요하다. 조금 이질감이 든다. 테스트의 대상이 `FeedService`의 `createFeed` 가 되어버린다. 
+뿐만 아니라 "피드의 컨텐츠의 길이"을 테스트할 때 뒤따라오는 `createFeed`의 '피드를 생성하고 저장'하는 기능이 정상적으로 동작해야만 한다. 추가적으로 테스트에 의존관계가 생기는 것은 적절하지 않다.  
+
+> **TODO** : why? 테스트에서 의존관계 bad(call out으로 빼기)
+
+반면, 값 객체를 사용했을때는 "피드의 컨텐츠의 길이는 200자를 넘어서는 안된다" 라는 로직을 테스트하기 위해 값 객체인 `FeedContent`만 필요하다. 검증로직이 `FeedContent`의 `checkContentLength`안에 위치하기 때문이다. 그럼 다음과 같이 테스트 코드를 작성해볼 수 있다. 
+
+```java
+
+@Test
+void givenOverLengthContent_whenCreatedFeedContent_thenThrowsException() {
+	// given
+	String overLengthContent = 'a'.repeat(201);
+
+	// when & then
+	asserThrow(Exception.class, () -> new FeedContent(overLengthContent));
+}
+```
+
+훨씬 간단해졌다. 이제는 테스트를 위해 `FeedService`가 필요하지 않다.
 
 ### 3. 명확한 의미를 표현 
-가독성 증가, 코드의 의미 이해가 쉬워짐. 
+
+- 가독성 증가, 코드의 의미 이해가 쉬워짐. 
 
 ### 4. 캐싱 & 재사용 가능
 불변타입이 가져다 주는 이점
