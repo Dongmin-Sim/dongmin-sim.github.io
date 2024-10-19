@@ -364,7 +364,6 @@ CPU의 연산 성능을 비교하기 위해 최대 소수 연산에 필요한 �
 - [A Brief History of Containers: From the 1970s Till Now](https://blog.aquasec.com/a-brief-history-of-containers-from-1970s-chroot-to-docker-2016)
 - [Understanding LXC and Docker Containers on Oracle Linux](https://forums.oracle.com/ords/apexds/post/understanding-lxc-and-docker-containers-on-oracle-linux-7995)
 - [Performance Evaluation of Docker Container and Virtual Machine](https://www.sciencedirect.com/science/article/pii/S1877050920311315)
-- [가상화 주요 용어 출처](http://www.virtual-space.co.kr/virtualization.html)
 - [가상화란 ? Redhat](https://www.redhat.com/ko/topics/virtualization/what-is-virtualization)
 - [[가상화] 하이퍼바이저와 가상화 ](https://suyeon96.tistory.com/52)
 - [하이퍼바이저(Hypervisor) 종류 정리 (feat. 전가상화, 반가상화)](https://m.blog.naver.com/PostView.naver?blogId=sharedrecord&logNo=222633834165&categoryNo=34&proxyReferer=)

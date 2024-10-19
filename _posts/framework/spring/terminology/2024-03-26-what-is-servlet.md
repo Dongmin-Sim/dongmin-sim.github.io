@@ -15,7 +15,7 @@ tags:
 - 웹 어플리케이션
 
 ## 연관 개념
-- [서블릿 컨테이너(Servlet Container)이란?]()
+- 서블릿 컨테이너(Servlet Container)이란?
 ---
 
 ## 들어가며 
