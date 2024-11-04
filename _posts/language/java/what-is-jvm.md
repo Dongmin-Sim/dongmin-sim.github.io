@@ -18,10 +18,37 @@ JVM 구성 요소 설명 + 현업에서 고려해볼만한 점 추가
 
 JVM 구성요소 이해
 
+###  JVM 메모리 구조 **runtime data area (위의 구성 요소들과 상호작용)**
+
+- 스레드 공유 (모든 스레드에 공유되어 어느 곳에서나 접근 가능)
+    - method area
+	    - 처음 메모리 공간을 올릴때 초기화되는 대상들을 저장하기 위한 메모리 공간
+        - **클래스의 메타 데이터**를 가지고 있는 영역, **상수 const** 변수들, **static**, 생성자, 메서드(바이트 코드) 등을 기본적으로 메모리에 로드되어있는 친구들 위치
+        - 프로그램이 종료될때까지 메모리에 남아있음. 
+	- Runtime Constant Pool(method area)
+		- Method Area 영역에 포함되지만 독자적 중요성을 띔 
+		- 클래스 파일 constant pool 테이블에 해당되는 영역
+    - heap
+        - 참조 값들,
+- 스레드 각자
+    - stack
+    - pc
+    - native method area?
+
+Hotspot JVM
+- Longview Technologies LLC라는 회사에서 1999년에 처음 발표한 JVM → SUN → Oracle
+- 중요 기능으로 최신 버전의 JVM 들에 포함됨
+
+https://deveric.tistory.com/123
+https://inpa.tistory.com/entry/JAVA-%E2%98%95-JVM-%EB%82%B4%EB%B6%80-%EA%B5%AC%EC%A1%B0-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EC%98%81%EC%97%AD-%EC%8B%AC%ED%99%94%ED%8E%B8#%EB%9F%B0%ED%83%80%EC%9E%84_%EB%8D%B0%EC%9D%B4%ED%84%B0_%EC%98%81%EC%97%AD_runtime_data_area
+
 ### Java compiler
     
 ### gc
-    
+- heap 영역과 관련 
+
+gc와 애플리케이션 응답 속도와 관련이 높음
+
 
 ### execute engine
 
@@ -47,27 +74,14 @@ JVM 구성요소 이해
             - 실행 전에 미리컴파일 해둘거냐, 런타임에 실시간으로 할거냐의 차이
             - 둘 다 장단점이 존재
 
+인터프리터 방식으로 실행되다가 메서드에 카운터가 존재.(카운터 2가지 존재) 이 카운더를 기준으로 많이 쓰이는 것을 컴파일 대상으로 지정, 컴파일 대상 큐에 넣고 , 컴파일 관련 스레드가 이를 모니터링하고 있다가 컴파일을 시작, 컴파일이 완료된 메서드는 불릴때마다 컴파일된 코드로 실행이되어서 빨라짐.
+
 ### class loader
 
 - 자바 클래스들을 메모리로 로드하는 역할,
 - Loading, Linking, initialization 기능을 담당한다.
 
-### **runtime data area (위의 구성 요소들과 상호작용)**
 
-- 스레드 공유
-    - method area
-        - **클래스의 메타 데이터**를 가지고 있는 영역, **상수 const** 변수들, **static** 기본적으로 메모리에 로드되어있는 친구들 위치
-    - heap
-        - 참조 값들,
-- 스레드 각자
-    - stack
-    - pc
-    - native method area?
-
-Hotspot JVM
-
-- Longview Technologies LLC라는 회사에서 1999년에 처음 발표한 JVM → SUN → Oracle
-- 중요 기능으로 최신 버전의 JVM 들에 포함됨
 
 
 
