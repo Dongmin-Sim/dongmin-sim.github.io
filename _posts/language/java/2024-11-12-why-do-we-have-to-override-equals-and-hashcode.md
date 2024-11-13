@@ -40,24 +40,33 @@ image:
 자바에서는 `==` 이라는 비교연산자를 통해서 동일성 비교를 할 수 있다. 
 `==` 비교 연산자는 참조형 타입의 객체에 대해 메모리 주소를 비교하도록 동작한다. 
 
-~~ 비교 방식 간단하게, 
+값타입의 경우에는 값 자체를 비교하고, 참조형 타입의 경우 두 객체가 같은 인스턴스인지 여부를 판단한다.
 
 그렇다면 자바에서 두 객체가 논리적으로 동일한지는 어떻게 판단할 수 있을까?
 ### equals
-equals() 메서드는 두 객체의 논리적으로 같은지 비교를 하기 위한 메서드다. 
+`equals()` 메서드는 두 객체가 서로 논리적으로 동등한지 비교를 하기 위한 메서드다. 
+`java`에서 모든 부모 객체가 되는 `Object`의 메서드이다.
 
+기본적으로 이 메서드를 오버라이드하지 않을 경우 두 객체의 참조값을 기준으로 비교를 한다. 
+즉, `==` 연산자와 동일한 방식으로 비교하게 된다.
 
-기본적으로 이 메서드를 오버라이드하지 않을 경우 
+```java
+public boolean equals(Object obj) {  
+    return (this == obj);  
+}
+```
 
 ### hashcode()
+`hashcode()` 메서드는 객체를 식별할 수 있는 값을 반환하는 메서드이다. 
+이 역시 `Object` 클래스에 정의된 메서드이다.
 
-객체의 16진수의 해시 값을 반환해주는 메서드이다.
 
-왜 이 메서드가 있는지?
 
 
 
 ## 어떻게 동작하나요?
+
+
 
 ## 왜 equals()와 hashCode()를 재정의해야 하나요?
 
@@ -66,10 +75,73 @@ equals() 메서드는 두 객체의 논리적으로 같은지 비교를 하기 �
 둘중 하나만 재정의했을때 발생할 수 잇는 문제점
 
 
-## equals()와 hashCode()를 재정의하지 않으면 어떤 문제가 발생하나요?
+## equals()와 hashCode() 오버라이드와 어떤 문제가 발생하나요?
+
+## equals를 잘못 재정의할 경우
 
 
+
+## hashcode를 잘못 재정의할 경우
 ### 컬렉션이 엉망진창?
+
+
+hashMap 동작 원리 
+put 과정 스택프레임
+
+1. map.put(k, v) 
+2. -> HashMap::put(k, v); 
+3. -> HashMap::hash(key) 
+```java
+static final int hash(Object key) {  
+    int h;  
+    return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);  
+}
+```
+4. -> key.hashcode()(여기서 오버라이드한 hashcode 메서드 참조) 
+5. ->HashMap::putVal(hash(key), key, value, false, true) 진입 
+```java
+Node<K,V>[] tab; Node<K,V> p; int n, i;  
+if ((tab = table) == null || (n = tab.length) == 0)  
+    n = (tab = resize()).length;  
+if ((p = tab[i = (n - 1) & hash]) == null)  
+    tab[i] = newNode(hash, key, value, null);  
+else {  
+    Node<K,V> e; K k;  
+    if (p.hash == hash &&  
+        ((k = p.key) == key || (key != null && key.equals(k))))  /// equals 비교 
+        e = p;  
+    else if (p instanceof TreeNode)  
+        e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);  
+    else {  
+        for (int binCount = 0; ; ++binCount) {  
+            if ((e = p.next) == null) {  
+                p.next = newNode(hash, key, value, null);  
+                if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st  
+                    treeifyBin(tab, hash);  
+                break;  
+            }  
+            if (e.hash == hash &&  
+                ((k = e.key) == key || (key != null && key.equals(k))))  
+                break;  
+            p = e;  
+        }  
+    }  
+    if (e != null) { // existing mapping for key  
+        V oldValue = e.value;  
+        if (!onlyIfAbsent || oldValue == null)  
+            e.value = value;  
+        afterNodeAccess(e);  
+        return oldValue;  
+    }  
+}  
+++modCount;  
+if (++size > threshold)  
+    resize();  
+afterNodeInsertion(evict);  
+return null;
+```
+
+
 
 hashCode" 를 잘못 오버라이딩하면 "HashMap" 등 hash 콜렉션의 성능이 떨어질 수가 있습니다. 어떤 케이스일 때 그럴 수 있을까요?
 
