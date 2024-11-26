@@ -13,20 +13,27 @@ image:
 
 ## 들어가며
 
+프로젝트를 진행하면서 도메인 객체의 `equals()` 와 `hashcode()`를 **습관적으로만 재정의해서 사용**하곤 했는데, 이번 글을 통해 `equals()` 와 `hashcode()`과의 관계와 왜 이 둘을 재정의해야만 하는지에 대해서 알아보려고 한다.
+
+`equals()` 와 `hashcode()`를 오버라이드 해야하는 이유과 두 메서드 간의 관계를 명확히 알고있지 않거나, 나처럼 원리와 이유를 모른채 습관적으로만 오버라이드를 했던 경험이 있다면 본 글에서 관련 개념을 익히는데 도움이 될 수 있다. 
+
+반면에 이 글의 대상이 아닌 독자는 다음과 같다. 
+- `equals()`와 `hashcode()` 메서드에 대한 기본적인 이해가 있는 사람.
+- 
+
+🙏 **시작하기 전에**  
+이 내용을 정확히 이해하려면 해시 자료구조에 대한 전반적인 이해와, 해시 충돌이라는 개념에 대해서 이해가 선제되면 좋다. 만약 잘 모르겠거나 기억이 나지 않는다면, 이에 대해서 설명해둔 글이 있어 한번 읽어보는 것을 권한다. 
+
+👉 [해시 자료구조와 Java HashMap이 해시 충돌을 해결하는 방법](https://dongmin-sim.github.io/posts/hash-data-structure/)
+
 `equals()` 와 `hashcode()` 메서드는 기본적으로 `java`의 `Object` 클래스에서 제공하는 메서드로, 이 메서드들은 객체의 고유한 값을 기준으로 동등성을 판단한다. 하지만 비즈니스 로직을 구현하기 위한 도메인 객체에서는 논리적 동등성을 기준으로 비교해야하는 경우가 많다. 이를 올바르게 재정의하지 않을 경우 예상치 못한 오류를 만날 수 있다.
 
-프로젝트를 진행하면서 도메인 객체의 비교를 위해서 `equals()` 와 `hashcode()`를 재정의해서 사용하곤 했는데, 이번 글을 통해 `equals()` 와 `hashcode()`에 대해서 깊게 알아보려고 한다. 이 글에서는 다음과 같은 내용들을 다룬다. 
-- `equals()` 와 `hashcode()`의 정의 
-- `equals()` 와 `hashcode()` 동작 방식 
-- `equals()` 와 `hashcode()` 오버라이드 해야하는 이유
-- `equals()` 와 `hashcode()` 오버라이드하지 않았을때 발생할 수 있는 문제점 
-- `equals()` 와 `hashcode()` 오버라이드하는 기준
-
-`equals()` 와 `hashcode()`를 오버라이드 해야하는 이유를 명확히 알고있지 않거나, 원리를 모른채 습관적으로만 오버라이드를 했던 경험이 있다면 해당 글의 개념을 익히는데 도움이 될 수 있다. 
-
-`equals()`와 `hashcode()` 를 올바르게 재정의하는 것은 애플리케이션 서비스의 안정성과 성능을 보장하기 위해 꼭 필요한 작업이다. 
+<br>
+---
 
 ## equals()와 hashCode()란 무엇인가?
+
+`equals()` 메서드는 `java`에서 모든 부모 객체가 되는 `Object`의 메서드이다.
 
 ### 객체의 비교 방식 
 
@@ -44,146 +51,104 @@ image:
 
 그렇다면 자바에서 두 객체가 논리적으로 동일한지는 어떻게 판단할 수 있을까?
 ### equals
-`equals()` 메서드는 두 객체가 서로 논리적으로 동등한지 비교를 하기 위한 메서드다. 
-`java`에서 모든 부모 객체가 되는 `Object`의 메서드이다.
+`equals()` 메서드는 두 객체가 서로 **논리적으로 동등한지** 비교를 하기 위한 메서드다.   
 
-기본적으로 이 메서드를 오버라이드하지 않을 경우 두 객체의 참조값을 기준으로 비교를 한다. 
-즉, `==` 연산자와 동일한 방식으로 비교하게 된다.
+"논리적으로 동등하다"라는 말은 무슨말일까? 
 
+다음 예시로 `euqals()` 메서드의 필요성을 살펴보자
+```java 
+public class Money {  
+    private BigDecimal amount;  
+    private String currency;  
+  
+    public Money(BigDecimal amount, String currency) {  
+        this.amount = amount;  
+        this.currency = currency;  
+    }  
+}
+```
+
+위 클래스는 금액과 통화를 표현하기 위한 클래스로, 금전 데이터를 하나의 객체로 추상화하여 다루고자 설계되었다. 금액을 다루다보면 서로 같은지 다른지, 어떤 금액이 더 큰지 비교해야하는 순간이 꼭 필요하다. 
+
+왼손과 오른손에 각각 `5,000`원씩 들려있다면 이것은 같은 '돈'이라고 볼 수 있는가?   
+현실세계에서의 답은 `yes`이다. 
+
+이를 `Money`객체로 구현해 다음과 같이 비교한다면 어떤 결과가 나올까??
+```java
+public static void main(String[] args) {  
+    Money moneyA = new Money(BigDecimal.valueOf(5000), "KRW");  
+    Money moneyB = new Money(BigDecimal.valueOf(5000), "KRW");  
+  
+    System.out.println(moneyA.equals(moneyB));  
+}
+```
+
+의도하고 기대했던 결과(`expected`)값은 `true`이지만,  실제 비교 결과(`actual` )는 `false`이다. 
+
+
+기본적으로 `equals()` 메서드를 오버라이드하지 않을 경우 두 객체의 참조값을 기준으로 비교를 한다.   
+아래 코드는 Object.java의 equals 코드를 가져온 것이다. 코드에서 보이는 것과 같이  `==` 연산자와 동일한 방식으로 비교하게 된다.
 ```java
 public boolean equals(Object obj) {  
     return (this == obj);  
 }
 ```
 
-### 해시 기반 자료구조
-
-해시 기반 자료구조는 해시 함수를 통해 데이터를 저장하고, 조회하는 자료구조를 의미한다. 
-주로 해시 테이블을 통해서 구현되고, `key-value` 쌍의 구조를 갖는다. 
-
-(해시 테이블 그림)
-
-해시 기반 자료구조는 해시 함수를 사용해 특정 위치에 빠르게 접근할 수 있는 것이 특징이다. 
-
-
-
-(이 자료구조의 주의점)
-
-해시 충돌 문제, 
-해시 충돌 해결법, 
-자바
-
--> 이걸로 빠르게 글을 하나 쓸까 
+따라서 개발자가 원하는 논리적 동등성 비교를 위해서는 반드시 `equals()`를 재정의해줘야만 한다. 
 
 ### hashcode()
-`hashcode()` 메서드는 객체를 식별할 수 있는 값을 반환하는 메서드이다. 
-이때 반환하는 정수 값은 객체의 해시 코드라고 부르며, 주로 해시 기반 자료구조에서 객체를 관리하기 위해 사용하는 메서드이다. 
+`hashcode()` 메서드는 객체를 식별할 수 있는 식별자 값을 반환하는 메서드이다. 
+
+이때 반환하는 정수 값은 객체의 해시 코드라고 부르며, 주로 해시 기반 자료구조에서 객체를 효율적으로 관리하기 위한 해시 함수에 사용된다. 
 
 이 역시 `Object` 클래스에 정의된 메서드이다. 
 
+단순히 `hashcode() == 객체 메모리 주소` 라고 암기하는 것은 바람직하지 않다. 
 
 
-
-
-
----
-
+### 오버라이드
 (왜 재정의해야하는지에 대한 내용이 앞에 나와야 )
+이 둘은 불충분하기 때문에, 개발자가 
 
 `equals()` 는 논리적 동등성 비교를 위한 메서드이고, `hashcode()` 는 해시 기반 자료구조에서 객체를 효율적으로 관리하기 위해 필요한 메서드이다. 이 둘은 전혀 다른 역할을 하는 것 같은데 왜 이 둘을 같이 재정의해야할까?  
 
-
 ## equals()와 hashCode() 의 관계? 
+
+결론부터 두 메서드는 해시 기반 컬렉션에서 객체 비교를 위한 조건을 만족시키기 위한? 메서드?
 
 자바에서 두 메서드의 연관관계 
 - 두 객체가 `equals()`로 같다고 판단되면, 반드시 동일한 해시코드를 반환
 - 반대로, 두 객체가 다른 해시코드를 가질 수는 있음 
 
 
+결론부터 말하자면 일관되게 오버라이드 해야함. 
+그 이유는? 
+
+해시 기반 컬렉션에서 정상적인 (개발자의 의도대로) 동작하는 것을 보장하기 위해서 이다.
 
 
-## equals를 잘못 재정의할 경우
 
-객체간의 올바른 비교가 이루어지지 않을 수 있음. 
-
+### 해시 기반 컬렉션에서 문제발생 
 
 
-## hashcode를 잘못 재정의할 경우
-
--> 해시 충돌 가능성이 높아짐. 
-
-해시 충돌 방식에는
 
 
-### 컬렉션이 엉망진창?
 
-java의 hashmap 구조 
-- 
-
-
+(그림)
 
 hashMap 동작 원리 
 객체 저장시 
-1. 객체의 해시 코드를 계산해서, 해시 코드 기반으로 버킷 고름
+1. 객체의 해시 코드를 계산해서, 해시 코드 기반으로 버킷의 인덱스 위치를 결정함. 
 2. 해당 버킷에 이미 객체가 존재하는 경우, -> equals 메서드를 비교
 	1. 만일 동일하면 중복 객체로 판단
 	2. 그렇지 않으면 새로운 객체 저장
 
+👉 [해시 자료구조와 Java HashMap이 해시 충돌을 해결하는 방법](https://dongmin-sim.github.io/posts/hash-data-structure/) 참고
 
-put 과정 스택프레임
+해시충돌 간략하게 설명 
 
-1. map.put(k, v) 
-2. -> HashMap::put(k, v); 
-3. -> HashMap::hash(key) 
-```java
-static final int hash(Object key) {  
-    int h;  
-    return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);  
-}
-```
-4. -> key.hashcode()(여기서 오버라이드한 hashcode 메서드 참조) 
-5. ->HashMap::putVal(hash(key), key, value, false, true) 진입 
-```java
-Node<K,V>[] tab; Node<K,V> p; int n, i;  
-if ((tab = table) == null || (n = tab.length) == 0)  
-    n = (tab = resize()).length;  
-if ((p = tab[i = (n - 1) & hash]) == null)  
-    tab[i] = newNode(hash, key, value, null);  
-else {  
-    Node<K,V> e; K k;  
-    if (p.hash == hash &&  
-        ((k = p.key) == key || (key != null && key.equals(k))))  /// equals 비교 
-        e = p;  
-    else if (p instanceof TreeNode)  
-        e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);  
-    else {  
-        for (int binCount = 0; ; ++binCount) {  
-            if ((e = p.next) == null) {  
-                p.next = newNode(hash, key, value, null);  
-                if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st  
-                    treeifyBin(tab, hash);  
-                break;  
-            }  
-            if (e.hash == hash &&  
-                ((k = e.key) == key || (key != null && key.equals(k))))  
-                break;  
-            p = e;  
-        }  
-    }  
-    if (e != null) { // existing mapping for key  
-        V oldValue = e.value;  
-        if (!onlyIfAbsent || oldValue == null)  
-            e.value = value;  
-        afterNodeAccess(e);  
-        return oldValue;  
-    }  
-}  
-++modCount;  
-if (++size > threshold)  
-    resize();  
-afterNodeInsertion(evict);  
-return null;
-```
+서로 다른 객체에 대해 동일한 해시값을 반환하여, 저장되는 버킷의 인덱스 주소가 같아져버리는 상황을 해시충돌이라한다. 
+
 
 
 
@@ -197,10 +162,37 @@ hashCode" 를 잘못 오버라이딩하면 "HashMap" 등 hash 콜렉션의 성�
 - 기존 "HashMap" 의 시간복잡도는 얼마이고, "hashCode" 를 잘못 오버라이딩 했을때의 시간복잡도는 얼마일까요?
 
 
-## equals()와 hashCode()를 올바르게 재정의하는 방법은?
+### equals를 오버라이드하지 않으면?
+
+객체간의 올바른 비교가 이루어지지 않을 수 있음. 
+
+- **`hashCode()`만 오버라이드하고 `equals()`를 오버라이드하지 않으면**:
+    
+    - 같은 버킷에 저장된 논리적으로 동일한 두 객체를 구분하지 못할 수 있습니다.
+
+### hashcode를 오버라이드하지 않으면?
+
+- **`equals()`만 오버라이드하고 `hashCode()`를 오버라이드하지 않으면**:
+- 논리적으로 동일한 두 객체가 서로 다른 해시 코드를 가져 다른 버킷에 저장될 수 있습니다. 
+- 이 경우 검색이나 중복 제거가 제대로 작동하지 않음
 
 
-## 재정의하지 말아야할 때는 언제인가요?
+hashcode를 
+-> 해시 충돌 가능성이 높아짐. 
 
+해시 충돌 방식에는
+
+## equals()와 hashCode()의 재정의 규칙
+
+1. `equals()`가 true를 반환하는 두 객체는 반드시 같은 `hashCode()` 값을 가져야 .
+    - 이유: 해시 기반 컬렉션(`HashMap`, `HashSet` 등)은 먼저 `hashCode()`를 사용해 객체를 저장할 버킷(메모리 위치)을 결정하고, 이후 동일한 버킷 내에서 `equals()`를 사용해 객체의 동등성을 확인합니다. 만약 이 규칙이 어겨지면, 논리적으로 동일한 객체임에도 불구하고 서로 다른 버킷에 저장되거나 검색되지 않을 수 있습니다[
+        
+2. **`equals()`가 false인 두 객체는 서로 다른 `hashCode()` 값을 가질 필요는 없습니다.**
+    
+    - 즉, 다른 객체가 동일한 해시 코드를 가질 수 있지만, 이는 해시 충돌(hash collision)을 초래할 수 있습니다. 충돌이 많아질수록 성능이 저하될 가능성이 있음. 
+        
+    
+3. **동일한 객체는 항상 동일한 `hashCode()` 값을 반환해야 .**
+	프로그램 실행 중에 객체의 상태가 변경되지 않았다면, 동일한 객체는 항상 같은 해시 코드를 반환해야 함
 
 ## 마무리
