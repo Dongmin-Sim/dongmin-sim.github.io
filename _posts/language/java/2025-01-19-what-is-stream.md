@@ -1,15 +1,12 @@
 ---
 title: Stream 구조와 특징
 author: codongmin
-date: 2024-06-10T23:42:00
-categories: 
+date: 2025-01-17T23:42:00
+categories:
+  - Java
 tags: 
 preview:
 ---
-
-
-## 컬렉션 
-Java에는 데이터를 정의하고 처리하기 위한 구조로 컬렉션을 제공한다. 그리고 대부분의 프로그래밍 작업에서 컬렉션을 이용한 작업이 사용된다. 예를 들어 특정 커피 컬렉션에서 커피들을 반복하면서 커피의 총 카페인양을 구한다던지, 이중에서 카페인이 없는 디카페인 음료만 따로 필터링하는 로직이 요구될 수도 있다. 
 
 
 ## Stream API란?
@@ -30,15 +27,7 @@ Java에는 데이터를 정의하고 처리하기 위한 구조로 컬렉션을 
 - filter, map, reduce, find, match, sort와 같은 연산들이 이에 해당한다.
 
 
-## 자바 8 이전 , Stream 비교
-
-(코드, 작성, 코드가 읽히는 순서를 굵은 표시로 표현하기) 
-
-
-
-### 컬렉션과 stream 차이
-
-
+## 컬렉션과 stream 차이
 
 
 스트림은 데이터 소스를 단 한번만 탐색할 수 있다.
@@ -51,13 +40,12 @@ Java에는 데이터를 정의하고 처리하기 위한 구조로 컬렉션을 
 
 ### 1. 선언형 
 - 스트림을 이용하면 선언형 (연산의 결과로 무엇을 하기를 바라는지 나타내는)프로그래밍 방식으로 컬렉션 데이터를 처리할 수 있다. 
+
 ### 2. 내부 반복
 사용자가 반복자를 사용하여 직접 요소를 반속하는 것을 외부 반복이라고 한다. 
 반복을 알아서 처리하고, 결과 스트림 값을 어딘가에 저장해주는 것을 내부 반복이라고 한다.
 - 반복자(for, while)를 이용해서 명시적으로 요소를 반복하는 컬렉션과는 다르게, 내부 반복을 지원한다. 
 - 이에 대한 연산 방법을 숨긴다.
-
-
 
 ### 3. 병렬 처리
 - 멀티스레드 코드를 구현하지 않아도 데이터를 투명하게 병렬로 처리할 수 있다. 
@@ -67,12 +55,12 @@ Java에는 데이터를 정의하고 처리하기 위한 구조로 컬렉션을 
 파이프라인은 데이터 소스에 적용하는 질의 같은 존재이다.
 덕분에 lazyness, short-circuiting과 같은 성능 최적화를 얻을 수 있다. 
 
-lazuness
+#### lazuness
 - 데이터를 언제 계산하느냐가 컬렉션과 스트림의 가장 큰 차이다. 
 - 컬력센은 현재 자료구조가 포함하는 모든 값을 메모리에 저장하는 자료구조이다. 
 - 즉, 컬렉션의 모든 요소는 컬렉션에 추가하기 전에 계산되어야 한다. 
 
-short-circuiting
+#### short-circuiting
 - and 연산에서 하나라도 거짓이면, 나머지 표현식에 대한 평가를 중지하고 결과를 반환
 - 전체 스트림을 처리하지 않아도 결과를 반환할 수 있는 연산 -> limit, matching 
 
@@ -80,8 +68,6 @@ short-circuiting
 
 이러한 특성으로 인해 결과적으로 생산자 - 소비자 관계를 형성한다. 
 인터넷 스트리밍을 예시로 들기 적합하다.
-
-
 
 - 선언형 : 간결하고 가독성이 좋음
 - 조립 가능 : 유연하게 대처 가능 
@@ -97,19 +83,33 @@ Stream은 기본적으로 데이터 소스를 필요로 한다.
 - _terminal_ (종단 작업)
 
 그리고 이 2가지를 결합하여서 **스트림 파이프 라인**을 형성한다.
-
 그림으로 나타내면 다음과 같다. 
 
-![[Pasted image 20240610230343.png]]
+![Desktop View](/assets/posts/language/java/2025-01-19-what-is-stream/stream-structure.png){: width="972" height="589"}_스트림 구조_
+
+
 ### 데이터 소스 (Data Source)
 데이터 소스는 스트림을 만들 수 있는 대상(target)을 의미한다. 다음과 같은 형태들이 데이터 소스가 될 수 있다. 
-- From a [`Collection`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/Collection.html "interface in java.util") via the `stream()` and `parallelStream()` methods;
-- From an array via [`Arrays.stream(Object[])`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/Arrays.html#stream-T:A-);
-- From static factory methods on the stream classes, such as [`Stream.of(Object[])`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/stream/Stream.html#of-T...-), [`IntStream.range(int, int)`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/stream/IntStream.html#range-int-int-) or [`Stream.iterate(Object, UnaryOperator)`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/stream/Stream.html#iterate-T-java.util.function.UnaryOperator-);
-- The lines of a file can be obtained from [`BufferedReader.lines()`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/io/BufferedReader.html#lines--);
-- Streams of file paths can be obtained from methods in [`Files`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/nio/file/Files.html "class in java.nio.file");
-- Streams of random numbers can be obtained from [`Random.ints()`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/Random.html#ints--);
-- Numerous other stream-bearing methods in the JDK, including [`BitSet.stream()`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/BitSet.html#stream--), [`Pattern.splitAsStream(java.lang.CharSequence)`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/regex/Pattern.html#splitAsStream-java.lang.CharSequence-), and [`JarFile.stream()`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/jar/JarFile.html#stream--).
+
+- Collection에서:  
+    `stream()` 및 `parallelStream()` 메서드를 사용하여 `Collection` 인터페이스를 구현한 데이터 구조(예: `List`, `Set`)로부터 스트림을 생성한다.
+- 배열(Array)에서:  
+    `Arrays.stream(Object[])` 메서드를 통해 배열을 스트림으로 변환한다. 이 방법은 배열 기반의 데이터를 스트림으로 처리할 때 유용하다.
+- Stream 클래스의 정적 팩토리 메서드:
+    - `Stream.of(Object[])`: 여러 개의 객체를 스트림으로 생성한다.
+    - `IntStream.range(int, int)`: 특정 범위의 정수를 포함하는 스트림을 생성한다.
+    - `Stream.iterate(Object, UnaryOperator)`: 초기값과 반복 규칙을 기반으로 무한 스트림을 생성한다.
+- 파일 라인(Line)에서:  
+    `BufferedReader.lines()` 메서드를 사용하여 파일의 각 줄을 스트림으로 가져온다. 이를 통해 파일 데이터를 효율적으로 처리할 수 있다.
+- 파일 경로(Path)에서:  
+    `Files` 클래스의 메서드를 사용하여 파일 경로의 스트림을 생성한다. 예를 들어 디렉토리 내 파일 목록을 스트림으로 처리할 때 유용하다.
+- 난수(Random Number) 스트림:  
+    `Random.ints()` 메서드를 통해 난수로 구성된 스트림을 생성한다. 이는 무작위 데이터 처리가 필요한 경우에 활용된다.
+- 기타 JDK 메서드:
+    - `BitSet.stream()`: 비트 집합(BitSet)의 값을 스트림으로 변환한다.
+    - `Pattern.splitAsStream(CharSequence)`: 문자열 패턴을 기준으로 나눈 결과를 스트림으로 반환한다.
+    - `JarFile.stream()`: JAR 파일 내 엔트리를 스트림으로 제공한다.
+
 ### 중간 연산 (Intermediate Operations)
 
 
@@ -130,8 +130,7 @@ Stream은 기본적으로 데이터 소스를 필요로 한다.
 
 한개의 종단 연산만 가능하다.
 
-종단 연산을 호출하기 전까지는 데이터소스에서 무엇도 선택되지 않는다. 그러므로 출력결과도 없다. 
-즉, 종단 연산이 호출되지 전까지는 메서드의 호출이 저장되는 효과가 있다. 
+종단 연산을 호출하기 전까지는 데이터소스에서 무엇도 선택되지 않는다. 그러므로 출력결과도 없다.  즉, 종단 연산이 호출되지 전까지는 메서드의 호출이 저장되는 효과가 있다. 
 
 filter나, sorted, map, collect와 같은 연산은 고수준 빌딩 블록으로 이루어져, 특정 스레딩 모델에 제한되지 않고, 자유롭게 어떤 상황에서든 사용할 수 있다. 결과적으로 데이터 처리 과정을 병렬화하면서 스레드와 락을 걱정할 필요가 없다. 
 
@@ -174,11 +173,7 @@ System.out.println("dishCount = " + dishCount);
 
 
 ## 숫자형 스트림 
-Integer를 기본형으로 언방싱해야함.
-
-기본형 특화 스트림 
-
-스트림 API 박싱 비용을 피할 수 있도록  기본형 특화 스트림을 제공함. 
+Integer를 기본형으로 언박싱해야함. 스트림 API 박싱 비용을 피할 수 있도록 기본형 특화 스트림을 제공함. 
 
 boxed 메서드로 숫자형 스트림 <-> 객체 스트림으로 변환이 가능함.
 ```java
@@ -260,10 +255,10 @@ pythagoreanTriples.limit(5)
         .forEach(t-> System.out.println(t[0] + " " + t[1] + " " + t[2]));
 ```
 - **내부 스트림**: 각 `a`에 대해 여러 `b` 값을 처리하여 `Stream<int[]>`을 반환하는 작은 스트림.
-- **평탄화**: 이러한 여러 내부 스트림을 모두 하나의 스트림으로 합치는 과정. 이로 인해 `Stream<Stream<int[]>>`이 아니라, **하나의 연속된 `Stream<int[]>`**이 됩니다.
+- **평탄화**: 이러한 여러 내부 스트림을 모두 하나의 스트림으로 합치는 과정. 이로 인해 `Stream<Stream<int[]>>`이 아니라, 하나의 연속된 `Stream<int[]>`이 된다
 
 ---
-## Stream 특징
+## Stream 특징 정리
 
 다시 스트림의 특징을 정리하자면 다음과 같다. 
 
@@ -271,25 +266,15 @@ pythagoreanTriples.limit(5)
 - 스트림은 반복문과 같이 유한한 사이즈를 같지 않는다. 무제한의 사이즈를 가질 수 있다. 
 	- 길이가 정해져 있지 않은 데이터소스의 연산을 수행할 수 있다. 
 	- `limit(n)` or `findFirst()` 과 같은 Short-circuiting 연산들로 제한할 수 있다. 
-
-- No storage. A stream is not a data structure that stores elements; instead, it conveys elements from a source such as a data structure, an array, a generator function, or an I/O channel, through a pipeline of computational operations.
-- Functional in nature. An operation on a stream produces a result, but does not modify its source. For example, filtering a `Stream` obtained from a collection produces a new `Stream` without the filtered elements, rather than removing elements from the source collection.
-- Laziness-seeking. Many stream operations, such as filtering, mapping, or duplicate removal, can be implemented lazily, exposing opportunities for optimization. For example, "find the first `String` with three consecutive vowels" need not examine all the input strings. Stream operations are divided into intermediate (`Stream`-producing) operations and terminal (value- or side-effect-producing) operations. Intermediate operations are always lazy.
-
-- Consumable. The elements of a stream are only visited once during the life of a stream. Like an [`Iterator`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/Iterator.html "interface in java.util"), a new stream must be generated to revisit the same elements of the source.
-
-병렬처리 
-### Parallelism
-
-Processing elements with an explicit `for-`loop is inherently serial. Streams facilitate parallel execution by reframing the computation as a pipeline of aggregate operations, rather than as imperative operations on each individual element. All streams operations can execute either in serial or in parallel. The stream implementations in the JDK create serial streams unless parallelism is explicitly requested. For example, `Collection` has methods [`Collection.stream()`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/Collection.html#stream--) and [`Collection.parallelStream()`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/Collection.html#parallelStream--), which produce sequential and parallel streams respectively; other stream-bearing methods such as [`IntStream.range(int, int)`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/stream/IntStream.html#range-int-int-) produce sequential streams but these streams can be efficiently parallelized by invoking their [`BaseStream.parallel()`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/stream/BaseStream.html#parallel--) method. To execute the prior "sum of weights of widgets" query in parallel, we would do:
-
-```
-
-     int sumOfWeights = widgets.
-```
-
-The only difference between the serial and parallel versions of this example is the creation of the initial stream, using "`parallelStream()`" instead of "`stream()`". When the terminal operation is initiated, the stream pipeline is executed sequentially or in parallel depending on the orientation of the stream on which it is invoked. Whether a stream will execute in serial or parallel can be determined with the `isParallel()` method, and the orientation of a stream can be modified with the [`BaseStream.sequential()`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/stream/BaseStream.html#sequential--) and [`BaseStream.parallel()`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/stream/BaseStream.html#parallel--) operations. When the terminal operation is initiated, the stream pipeline is executed sequentially or in parallel depending on the mode of the stream on which it is invoked.
-
-Except for operations identified as explicitly nondeterministic, such as `findAny()`, whether a stream executes sequentially or in parallel should not change the result of the computation.
-
-Most stream operations accept parameters that describe user-specified behavior, which are often lambda expressions. To preserve correct behavior, these _behavioral parameters_ must be _non-interfering_, and in most cases must be _stateless_. Such parameters are always instances of a [functional interface](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/function/package-summary.html) such as [`Function`](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/util/function/Function.html "interface in java.util.function"), and are often lambda expressions or method references.
+- 저장소가 아님  
+    스트림은 데이터를 저장하는 자료구조가 아니다. 대신, 데이터 구조(Array, Collection), 생성 함수, I/O 채널 등과 같은 소스로부터 요소를 전달받아 연산 파이프라인을 통해 처리한다.
+- 함수형 특성  
+    스트림에서 수행되는 연산은 결과를 생성하지만 원본 데이터를 수정하지 않는다.  
+    예를 들어, 컬렉션에서 얻은 `Stream`에 필터링 연산을 적용하면 필터링된 요소를 제외한 새로운 `Stream`이 생성되며, 원본 컬렉션의 데이터는 변경되지 않는다.
+- 지연(lazy) 연산 지원  
+    스트림의 많은 연산(필터링, 매핑, 중복 제거 등)은 지연 평가 방식으로 구현될 수 있어 최적화가 가능하다.  
+    예를 들어, "세 개의 연속된 모음을 가진 첫 번째 문자열 찾기"와 같은 작업은 모든 입력 문자열을 검사하지 않아도 된다.  
+    스트림 연산은 중간 연산(`Stream`을 반환)과 최종 연산(값 또는 부작용을 생성)으로 나뉘며, 중간 연산은 항상 지연 평가된다.
+- 소모성  
+    스트림의 요소는 스트림이 존재하는 동안 한 번만 접근할 수 있다.  
+    이는 [`Iterator`](https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html)와 유사하며, 동일한 소스의 요소를 다시 방문하려면 새로운 스트림을 생성해야 한다.
