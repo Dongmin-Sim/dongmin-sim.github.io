@@ -5,7 +5,7 @@ date: 2025-01-17T23:42:00
 categories:
   - Java
 tags: 
-preview:
+preview: 자바 스트림에 대해 정리한 글입니다.
 ---
 
 
